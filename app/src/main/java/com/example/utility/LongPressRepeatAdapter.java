@@ -11,7 +11,7 @@ public abstract class LongPressRepeatAdapter {
 
     public abstract class Callbacks {
         public abstract void onClick(View v);
-        public void onLongPressed(View v) {
+        public void onLongPress(View v) {
             onClick(v);
         }
         public void onKeyRepeat(View v) {
@@ -34,7 +34,7 @@ public abstract class LongPressRepeatAdapter {
                     return;
                 }
 
-                callbacks.onLongPressed(view);
+                callbacks.onKeyRepeat(view);
                 handler.postDelayed(this, interval);
             }
         };
@@ -50,7 +50,7 @@ public abstract class LongPressRepeatAdapter {
             @Override
             public boolean onLongClick(View view) {
                 isContinue.value = true;
-                callbacks.onKeyRepeat(view);
+                callbacks.onLongPress(view);
                 handler.postDelayed(repeatRunnable, interval);
                 return true;
             }
