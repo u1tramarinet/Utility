@@ -15,30 +15,30 @@ public enum PreferencesKey {
         STRING(String.class, "");
 
         @NonNull
-        final Class<?> clazz;
+        private final Class<?> clazz;
         @NonNull
-        final Object defaultValue;
+        private final Object defaultValue;
 
         Type(@NonNull Class<?> clazz, @NonNull Object defaultValue) {
-            ConditionsUtil.require(isSameClass(clazz, defaultValue));
+            ConditionsUtil.require(isClassSame(clazz, defaultValue));
 
             this.clazz = clazz;
             this.defaultValue = defaultValue;
         }
 
-        private boolean isSameClass(@NonNull Class<?> clazz, @NonNull Object defaultValue) {
+        private static boolean isClassSame(@NonNull Class<?> clazz, @NonNull Object defaultValue) {
             return clazz.isInstance(defaultValue);
         }
     }
 
     @NonNull
-    final Type type;
+    public final Type type;
     @NonNull
-    final Object defaultValue;
+    public final Object defaultValue;
 
     PreferencesKey(@NonNull Type type, @Nullable Object defaultValue) {
         if (defaultValue == null) defaultValue = type.defaultValue;
-        ConditionsUtil.require(type.isSameClass(type.clazz, defaultValue));
+        ConditionsUtil.require(Type.isClassSame(type.clazz, defaultValue));
 
         this.type = type;
         this.defaultValue = defaultValue;
@@ -48,7 +48,7 @@ public enum PreferencesKey {
         this(type, null);
     }
 
-    boolean isSameType(@NonNull Type type) {
+    public boolean equalsType(@NonNull Type type) {
         return this.type == type;
     }
 }
