@@ -11,6 +11,10 @@ import com.example.utility.ConditionsUtil;
 
 public class SharedPreferencesWrapper {
 
+    public interface Listener {
+        void onChanged(@Nullable SharedPreferences sharedPreferences, @Nullable PreferencesKey key);
+    }
+
     @NonNull
     private SharedPreferences preferences;
     @Nullable
@@ -129,6 +133,14 @@ public class SharedPreferencesWrapper {
         return preferences.contains(key.name());
     }
 
+    public void registerListener(@Nullable Listener listener) {
+        preferences.registerOnSharedPreferenceChangeListener(convertListener(listener));
+    }
+
+    public void unregisterListener(@Nullable Listener listener) {
+        preferences.unregisterOnSharedPreferenceChangeListener(convertListener(listener));
+    }
+
     @NonNull
     private SharedPreferences.Editor getEditor() {
         if (editor == null) {
@@ -137,7 +149,20 @@ public class SharedPreferencesWrapper {
         return editor;
     }
 
-    private void requireSameType(@NonNull PreferencesKey key, PreferencesKey.Type type) {
+    private void requireSameType(@NonNull PreferencesKey key, @NonNull PreferencesKey.Type type) {
         ConditionsUtil.require(key.equalsType(type));
+    }
+
+    private SharedPreferences.OnSharedPreferenceChangeListener convertListener(@Nullable final Listener listener) {
+        if (listener == null) {
+            return null;
+        }
+
+        return new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                listener.onChanged(sharedPreferences, PreferencesKey.valueOf(key));
+            }
+        };
     }
 }
